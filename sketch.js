@@ -1,7 +1,7 @@
-// Comisión de Matías - Joray (77302/9); Esteban (93509/6); Galasso (94698/3); Farías Jomñuk (86909/7).
-// Video explicativo: https://youtu.be/YxsqxWqlNRM
+// Comisión de Lisandro y Abril - Baccalaro; Esteban; Farías Jomnuk; Galasso; Custodio; Ardaiz.
+// Video explicativo: 
 
-let monitorear = false;
+let monitorear = true;
 
 let AMP_MIN = 0.02;
 let AMP_MAX = 0.06;
@@ -20,43 +20,11 @@ let haySonido; // estado de cómo está el sonido en cada momento
 let antesHabiaSonido; // memoria del estado anterior del sonido
 
 let estado = "inicio";
-let columnas = [];
-
-let cantidadFilas;
-let cantidadColumnas;
-let cantidadCeldas;
-
-let colorPaleta;
-let colorRandom;
-
-let colorRotulo;
-let numRotulo;
-
-let imagenesPaleta = [];
-
-let textura;
-
-let marca;
-
-let filas = [];
-let numFilas;
-
-let margenX = 0;
 
 const model_url =
   "https://cdn.jsdelivr.net/gh/ml5js/ml5-data-and-models/models/pitch-detection/crepe/";
 
 function preload() {
-  loadFont('data/Kurt-Regular.otf');
-
-  let urls_img = [
-    "paleta/paleta_1.png",
-    "paleta/paleta_2.png",
-    "paleta/paleta_3.png",
-    "paleta/paleta_4.png",
-  ];
-
-  textura = loadImage("data/textura.png");
 
   // Carga de las imágenes de trazos figura en el array imagen_paleta_fondo
   for (let i = 0; i < urls_img.length; i++) {
@@ -81,24 +49,9 @@ function setup() {
   gestorPitch = new GestorSenial(FREC_MIN, FREC_MAX);
 
   colorMode(HSB, 360, 100, 100, 1);
-  colorPaleta = new paleta(imagenesPaleta);
-
-  colorRotulo = colorPaleta.darUnColor();
-  numRotulo = int(random(1,1000000));
 
   antesHabiaSonido = false;
 
-  // Crear las filas
-  numFilas = 10;
-  let y = 5;
-  for (let i = 0; i < numFilas; i++) {
-    let altura = i % 2 === 0 ? floor(random(25, 75)) : floor(random(75, 125));
-    let margenY = i % 2 === 0 ? 10 : 10;
-    let fila = new Fila(y, altura);
-    filas.push(fila);
-    y += altura + margenY;
-    //y += (i > 0 ? (i % 2 === 0) ? filas[i].altura / 2: filas[i].altura * 2 : filas[i].altura * 2) + margenY;
-  }
 }
 
 function draw() {
@@ -111,36 +64,23 @@ function draw() {
   let finDelSonido = !haySonido && antesHabiaSonido; // evento de fIN de un sonido
 
   if (estado == "inicio") {
-    // Dibujar las filas
     background(0);
-
-    //rectMode(CENTER);
-    for (let fila of filas) {
-      push();
-      fila.display();
-      pop();
-    }
-    marco();
-    rotulo(colorRotulo, numRotulo);
-    image(textura, 0, 0, displayWidth, displayHeight);
 
     if (inicioElSonido) {
     }
 
     if (haySonido) {
       //Estado
-      columnas[cantidadColumnas] = new Columna();
+      
     }
 
     if (finDelSonido) {
       //Evento
-      marca = millis();
+     
     }
     if (!haySonido) {
       //Estado SILENCIO
-      push();
-      dibujarTextura();
-      pop();
+      
       let ahora = millis();
     }
   }
@@ -152,28 +92,6 @@ function draw() {
 
   printData();
   antesHabiaSonido = haySonido;
-}
-
-function dibujarTextura() {
-  let numFibers = 150;
-  if (frameCount % 10 === 0) {
-    for (let i = 0; i < numFibers; i++) {
-      let x1 = random() * displayWidth;
-      let y1 = random() * displayHeight;
-      let theta = random() * 2 * Math.PI;
-      let segmentLength = random() * 5 + 1;
-      let x2 = cos(theta) * segmentLength + x1;
-      let y2 = sin(theta) * segmentLength + y1;
-      stroke(0, 10 - random() * 5, 20 - random() * 8, random() * 2 + 10);
-      line(x1, y1, x2, y2);
-    }
-  }
-}
-
-function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
-  filas = [];
-  setup(); // Vuelve a crear las filas y columnas cuando se redimensiona la ventana
 }
 
 // ---- Debug ---
@@ -202,7 +120,6 @@ function modelLoaded() {
 function getPitch() {
   pitch.getPitch(function (err, frequency) {
     gestorPitch.actualizar(frequency);
-    //adjustRowHeights(gestorAmp.filtrada);
     //console.log(frequency);
 
     getPitch();
